@@ -7,13 +7,11 @@ class Sand(Element):
         super().__init__(position)
         self.color = (255, 255, 0)
 
-    def update(self, grid: list[list]) -> None:
-        px = self.position[0]
-        py = self.position[1]
+    def update(self, grid: list[list[int]]) -> None:
+        if self.get_out_of_bounds(grid): return
 
-        # doesn't allow index out of range error
-        if py + 1 >= len(grid[0]) or py - 1 < 0: return
-        if px + 1 >= len(grid) or px - 1 < 0: return
+        px: int = self.position[0]
+        py: int = self.position[1]
 
         # go straight down if possible
         if grid[px][py+1] == 0:
