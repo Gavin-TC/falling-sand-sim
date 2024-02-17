@@ -14,11 +14,12 @@ class Water(Element):
         py: int = self.position[1]
 
         # if you can go down, do it
-        if grid[px][py+1] == None:
+        if grid[px][py+1] == 0:
             py += 1
         else:
             num = random.choice([-1, 1])
-            if grid[px+num][py] == None:
+            if grid[px+num][py] == 0:
                 px += num
 
+        grid[px][py] = 1
         self.position = (px, py)

@@ -38,8 +38,8 @@ def main():
     # spawn_thread.start()
     # remove_thread.start()
 
-    elements: list[list[Element]] = [[None for _ in range(rows)] for _ in range(cols)]
-    # grid: list[list[int]] = [[0 for _ in range(rows)] for _ in range(cols)]
+    elements: list[Element] = []
+    grid: list[list[int]] = [[0 for _ in range(rows)] for _ in range(cols)]
 
     while game_running:
         for event in pygame.event.get():
@@ -66,21 +66,23 @@ def main():
                 if event.button == 3: right_drag = False
 
         if left_drag:
-            spawn_element(selected_type, elements)
+            spawn_element(selected_type, elements, grid)
         elif right_drag:
-            remove_element(elements)
+            remove_element(elements, grid)
 
         screen.fill((0, 0, 0))
 
-        # get all the element objects in 2d array
-        for list in elements:
-            for element in list:
-                if element:
-                    px = element.get_position()[0]
-                    py = element.get_position()[1]
+        grid = [[0 for _ in range(rows)] for _ in range(cols)]
 
-                    element.update(elements)
-                    pygame.draw.rect(screen, element.get_color(), (px * resolution, py * resolution, resolution, resolution))
+        # get all the element objects in 2d array
+        for element in elements:
+            px = element.get_position()[0]
+            py = element.get_position()[1]
+
+            grid[px][py] = 1
+
+            element.update(grid)
+            pygame.draw.rect(screen, element.get_color(), (px * resolution, py * resolution, resolution, resolution))
 
         # FPS stuff
         clock.tick()
@@ -89,12 +91,12 @@ def main():
         screen.blit(fps_text, (5, 5))
 
         pygame.display.flip()
-        # time.sleep(0.05)
+        # time.sleep(0.1)
     pygame.quit()
 
-def spawn_element(selected_type: int, elements: list[list[Element]]) -> None:
+def spawn_element(selected_type: int, elements: list[Element], grid: list[list[int]])-> None:
     mouse_pos = pygame.mouse.get_pos()
-    radius = 5
+    radius = 1
 
     for x in range(radius):
         for y in range(radius):
@@ -102,23 +104,26 @@ def spawn_element(selected_type: int, elements: list[list[Element]]) -> None:
             py = int(mouse_pos[1] / resolution) - y
 
             if selected_type == 0:
-                if elements[px][py] is None:
-                    elements[px][py] = Sand((px, py))
-                elif selected_type == 1:
-                    if elements[px][py] is None:
-                        elements[px][py] = Water((px, py))
+                if grid[px][py] == 0:
+                    grid[px][py] = 1
+                    elements.append(Sand((px, py)))
+            elif selected_type == 1:
+                if grid[px][py] == 0:
+                    grid[px][py] = 1
+                    elements.append(Water((px, py)))
 
-def remove_element(elements: list[list[Element]]) -> None:
+def remove_element(elements: list[Element], grid: list[list[int]]) -> None:
     mouse_pos = pygame.mouse.get_pos()
     radius = 10
 
     for x in range(radius):
         for y in range(radius):
-            px = int(mouse_pos[0] / resolution) - x
-            py = int(mouse_pos[1] / resolution) - y
+            positions = [element.get_position() for element in elements]
+            if positions:
+                px = int(mouse_pos[0] / resolution) - x
+                py = int(mouse_pos[1] / resolution) - y
 
-            for element in elements:
-                if element.get_position() == (px, py):
-                    elements.remove(element)
+                if grid[px][py] == 1:
+                    grid[px][py] = 0
 
 main()
