@@ -5,9 +5,11 @@ from Elements.element import Element
 class Water(Element):
     def __init__(self, position) -> None:
         super().__init__(position)
-        self.color = (0, 0, 255, 255//2)
+        self.color = (0, 0, 255, 255)
+        self.name = "Water"
+        self.density = 1
 
-    def update(self, grid: list[list[int]]) -> None:
+    def update(self, grid: list[list[int]], elements: list[Element]) -> None:
         if self.get_out_of_bounds(grid): return
 
         px: int = self.position[0]

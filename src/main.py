@@ -81,7 +81,7 @@ def main():
 
             grid[px][py] = 1
 
-            element.update(grid)
+            element.update(grid, elements)
             pygame.draw.rect(screen, element.get_color(), (px * resolution, py * resolution, resolution, resolution))
 
         # FPS stuff
@@ -124,6 +124,9 @@ def remove_element(elements: list[Element], grid: list[list[int]]) -> None:
                 py = int(mouse_pos[1] / resolution) - y
 
                 if grid[px][py] == 1:
-                    grid[px][py] = 0
-
+                    try:
+                        grid[px][py] = 0
+                        elements.remove(elements[positions.index((px, py))])
+                    except:
+                        pass
 main()
