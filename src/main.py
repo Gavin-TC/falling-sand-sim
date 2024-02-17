@@ -26,8 +26,6 @@ font = pygame.font.SysFont("Arial", 18)
 def main():
     game_running = True
 
-    elements: list[list[Element]] = [[None for _ in range(rows)] for _ in range(cols)]
-    grid: list[list[int]] = [[0 for _ in range(rows)] for _ in range(cols)]
 
     # 0 = sand, 1 = water, 2 = wood, 3 = fire
     selected_type = 0
@@ -39,6 +37,9 @@ def main():
     # remove_thread = threading.Thread(target=remove_element, args=elements)
     # spawn_thread.start()
     # remove_thread.start()
+
+    elements: list[list[Element]] = [[None for _ in range(rows)] for _ in range(cols)]
+    # grid: list[list[int]] = [[0 for _ in range(rows)] for _ in range(cols)]
 
     while game_running:
         for event in pygame.event.get():
@@ -65,34 +66,33 @@ def main():
                 if event.button == 3: right_drag = False
 
         if left_drag:
-            spawn_element(selected_type, elements)
+            elements = spawn_element(selected_type, elements)
         elif right_drag:
             remove_element(elements)
 
         screen.fill((0, 0, 0))
 
-        # reset the grid
-        for x in range(cols):
-            for y in range(rows):
-                if grid[x][y] != None:
-                    grid[x][y] = None
-
         # get all the element objects in 2d array
         for list in elements:
             for element in list:
-                if element != None:
+                if element:
+                    print(element.get_name())
                     px = element.get_position()[0]
                     py = element.get_position()[1]
 
-                    element.update(grid)
+                    print("Position: ", (px, py))
+
+                    element.update(elements)
                     pygame.draw.rect(screen, element.get_color(), (px * resolution, py * resolution, resolution, resolution))
 
+        # FPS stuff
         clock.tick()
         fps = str(int(clock.get_fps()))
         fps_text = font.render("FPS: " + fps, True, (255, 255, 255))
         screen.blit(fps_text, (5, 5))
+
         pygame.display.flip()
-        # time.sleep(0.05)k
+        # time.sleep(0.05)
     pygame.quit()
 
 def spawn_element(selected_type: int, elements: list[list[Element]]) -> None:
@@ -107,11 +107,11 @@ def spawn_element(selected_type: int, elements: list[list[Element]]) -> None:
             if selected_type == 0:
                 if elements[px][py] is None:
                     elements[px][py] = Sand((px, py))
-            elif selected_type == 1:
-                if elements[px][py] is None:
-                    elements[px][py] = Water((px, py))
+                elif selected_type == 1:
+                    if elements[px][py] is None:
+                        elements[px][py] = Water((px, py))
 
-def remove_element(elements: list[Element]) -> None:
+def remove_element(elements: list[list[Element]]) -> None:
     mouse_pos = pygame.mouse.get_pos()
     radius = 10
 

@@ -6,6 +6,7 @@ class Sand(Element):
     def __init__(self, position):
         super().__init__(position)
         self.color = (255, 255, 0, 255)
+        self.name = "Sand"
 
     def update(self, grid: list[list[int]]) -> None:
         if self.get_out_of_bounds(grid): return
@@ -34,5 +35,4 @@ class Sand(Element):
                     px -= 1
                     py += 1
 
-        grid[px][py] = 1
         self.position = (px, py)

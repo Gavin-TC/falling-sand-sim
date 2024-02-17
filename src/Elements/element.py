@@ -4,6 +4,7 @@ class Element:
     # <1 floats, >1 floats
     density: int = 1
     color: tuple[int, int, int, int] = (255, 255, 255, 255)
+    name: str = ""
 
     def __init__(self, position):
         self.position = position
@@ -23,3 +24,6 @@ class Element:
 
     def get_color(self) -> tuple:
         return self.color
+
+    def get_name(self) -> str:
+        return self.name
