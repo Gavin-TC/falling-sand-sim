@@ -3,7 +3,7 @@ class Element:
     # default is 1, same as water.
     # <1 floats, >1 floats
     density: int = 1
-    color: tuple[int, int, int] = (0, 0, 0)
+    color: tuple[int, int, int, int] = (255, 255, 255, 255)
 
     def __init__(self, position):
         self.position = position
