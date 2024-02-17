@@ -66,7 +66,7 @@ def main():
                 if event.button == 3: right_drag = False
 
         if left_drag:
-            elements = spawn_element(selected_type, elements)
+            spawn_element(selected_type, elements)
         elif right_drag:
             remove_element(elements)
 
@@ -76,11 +76,8 @@ def main():
         for list in elements:
             for element in list:
                 if element:
-                    print(element.get_name())
                     px = element.get_position()[0]
                     py = element.get_position()[1]
-
-                    print("Position: ", (px, py))
 
                     element.update(elements)
                     pygame.draw.rect(screen, element.get_color(), (px * resolution, py * resolution, resolution, resolution))
