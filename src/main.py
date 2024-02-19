@@ -27,7 +27,7 @@ def main():
     game_running = True
 
 
-    # 0 = sand, 1 = water, 2 = wood, 3 = fire
+    # 0 = sand, 1 = water
     selected_type = 0
 
     left_drag = False
@@ -123,10 +123,13 @@ def remove_element(elements: list[Element], grid: list[list[int]]) -> None:
                 px = int(mouse_pos[0] / resolution) - x
                 py = int(mouse_pos[1] / resolution) - y
 
-                if grid[px][py] == 1:
-                    try:
-                        grid[px][py] = 0
-                        elements.remove(elements[positions.index((px, py))])
-                    except:
-                        pass
+                try:
+                    if grid[px][py] == 1:
+                        try:
+                            grid[px][py] = 0
+                            elements.remove(elements[positions.index((px, py))])
+                        except:
+                            pass
+                except:
+                    pass
 main()
