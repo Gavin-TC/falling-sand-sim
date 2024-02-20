@@ -13,11 +13,9 @@ class Element:
         pass
 
     def get_out_of_bounds(self, grid: list[list[int]]) -> bool:
-        # doesn't allow index out of range error
-        if self.position[1] + 1 >= len(grid[0]) or self.position[1] - 1 < 0: return True
-        if self.position[0] + 1 >= len(grid) or self.position[0] - 1 < 0: return True
+        if self.position[1] + 1 == len(grid[0]) or self.position[1] - 1 < -1: return True
+        if self.position[0] + 1 > len(grid)    or self.position[0] - 1 < -1: return True
         return False
-
 
     def get_position(self) -> tuple:
         return self.position

@@ -5,6 +5,8 @@ import time
 from Elements.element import Element
 from Elements.sand import Sand
 from Elements.water import Water
+from Elements.wood import Wood
+from Elements.fire import Fire
 
 pygame.init()
 
@@ -27,11 +29,12 @@ def main():
     game_running = True
 
 
-    # 0 = sand, 1 = water
-    selected_type = 0
+    # 1 = sand, 2 = water, 3 = wood
+    selected_type = 1
 
     left_drag = False
     right_drag = False
+    slow_motion = False
 
     # spawn_thread = threading.Thread(target=spawn_element, args=elements)
     # remove_thread = threading.Thread(target=remove_element, args=elements)
@@ -48,15 +51,20 @@ def main():
 
             if event.type == pygame.KEYDOWN:
                 match event.key:
-                    # escape key, for some reason pygame.QUIT doesn't work on mac.
-                    case 27:
+                    case 27:  # escape key, for some reason pygame.QUIT doesn't work on mac.
                         game_running = False
                     case 49:
-                        selected_type = 0
-                    case 50:
                         selected_type = 1
+                    case 50:
+                        selected_type = 2
+                    case 51:
+                        selected_type = 3
+                    case 52:
+                        selected_type = 4
+                    case 98:
+                        slow_motion = not slow_motion
                     case _:
-                        selected_type = 0
+                        selected_type = 1
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1: left_drag = True
@@ -65,10 +73,8 @@ def main():
                 if event.button == 1: left_drag = False
                 if event.button == 3: right_drag = False
 
-        if left_drag:
-            spawn_element(selected_type, elements, grid)
-        elif right_drag:
-            remove_element(elements, grid)
+        if left_drag:    spawn_element(selected_type, elements, grid)
+        elif right_drag: remove_element(elements, grid)
 
         screen.fill((0, 0, 0))
 
@@ -79,38 +85,62 @@ def main():
             px = element.get_position()[0]
             py = element.get_position()[1]
 
-            grid[px][py] = 1
+            match element.get_name():
+                case "Sand":
+                    grid[px][py] = 1
+                case "Water":
+                    grid[px][py] = 2
+                case "Wood":
+                    grid[px][py] = 3
 
             element.update(grid, elements)
             pygame.draw.rect(screen, element.get_color(), (px * resolution, py * resolution, resolution, resolution))
 
-        # FPS stuff
+        # =========
+        # FPS/Display stuff
         clock.tick()
         fps = str(int(clock.get_fps()))
         fps_text = font.render("FPS: " + fps, True, (255, 255, 255))
         screen.blit(fps_text, (5, 5))
 
         pygame.display.flip()
-        # time.sleep(0.1)
+        # =========
+
+        if slow_motion:
+            time.sleep(0.075)
     pygame.quit()
 
 def spawn_element(selected_type: int, elements: list[Element], grid: list[list[int]])-> None:
     mouse_pos = pygame.mouse.get_pos()
+
     radius = 1
+    # if selected_type == 2:
+    #     radius = 5
+    if selected_type == 3 or selected_type == 4:
+        radius = 5
 
     for x in range(radius):
         for y in range(radius):
             px = int(mouse_pos[0] / resolution) - x
             py = int(mouse_pos[1] / resolution) - y
 
-            if selected_type == 0:
+            if selected_type == 1:
                 if grid[px][py] == 0:
                     grid[px][py] = 1
                     elements.append(Sand((px, py)))
-            elif selected_type == 1:
+            elif selected_type == 2:
                 if grid[px][py] == 0:
                     grid[px][py] = 1
                     elements.append(Water((px, py)))
+            elif selected_type == 3:
+                if grid[px][py] == 0:
+                    grid[px][py] = 3
+                    elements.append(Wood((px, py)))
+            elif selected_type == 4:
+                if grid[px][py] == 0:
+                    grid[px][py] = 4
+                    elements.append(Fire((px, py)))
+
 
 def remove_element(elements: list[Element], grid: list[list[int]]) -> None:
     mouse_pos = pygame.mouse.get_pos()
@@ -124,7 +154,7 @@ def remove_element(elements: list[Element], grid: list[list[int]]) -> None:
                 py = int(mouse_pos[1] / resolution) - y
 
                 try:
-                    if grid[px][py] == 1:
+                    if grid[px][py] != 0:
                         try:
                             grid[px][py] = 0
                             elements.remove(elements[positions.index((px, py))])
@@ -132,4 +162,5 @@ def remove_element(elements: list[Element], grid: list[list[int]]) -> None:
                             pass
                 except:
                     pass
+
 main()
