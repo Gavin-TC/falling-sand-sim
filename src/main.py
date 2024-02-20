@@ -25,7 +25,7 @@ pygame.display.set_caption("Falling Sand Simulation")
 clock = pygame.time.Clock()
 font = pygame.font.SysFont("Arial", 18)
 
-positions = [] 
+positions = []
 
 def main():
     global positions
@@ -97,17 +97,15 @@ def main():
                 case "Wood":
                     grid[px][py] = 3
 
-            if not element.get_name() == "Wood": 
+            if not element.get_name() == "Wood":
                 element.update(grid, elements)
-            
-            if py < 0:
-                elements.remove(element)
 
+            # if (px, py) in positions:
             positions.remove((px, py))
             px = element.get_position()[0]
             py = element.get_position()[1]
             positions.append((px, py))
-           
+
             pygame.draw.rect(screen, element.get_color(), (px * resolution, py * resolution, resolution, resolution))
 
         # =========
@@ -126,13 +124,13 @@ def main():
 
 def spawn_element(selected_type: int, elements: list[Element], grid: list[list[int]])-> None:
     global positions
-    
+
     mouse_pos = pygame.mouse.get_pos()
     radius = 1
-    # if selected_type == 2:
-    #     radius = 5
-    if selected_type == 3 or selected_type == 4:
+    if selected_type == 2:
         radius = 5
+    if selected_type == 3 or selected_type == 4:
+        radius = 3
 
     for x in range(radius):
         for y in range(radius):
@@ -159,7 +157,7 @@ def spawn_element(selected_type: int, elements: list[Element], grid: list[list[i
                     grid[px][py] = 4
                     elements.append(Fire((px, py)))
                     positions.append((px, py))
-                    
+
 
 
 def remove_element(elements: list[Element], grid: list[list[int]]) -> None:
@@ -174,7 +172,7 @@ def remove_element(elements: list[Element], grid: list[list[int]]) -> None:
         for y in range(radius):
             px = int(mx / resolution) - x
             py = int(my / resolution) - y
-            
+
             if (px, py) in positions:
                 try:
                     if grid[px][py] != 0:

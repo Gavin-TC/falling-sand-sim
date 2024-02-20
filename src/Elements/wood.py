@@ -6,7 +6,8 @@ class Wood(Element):
     is_on_fire = False
     def __init__(self, position):
         super().__init__(position)
-        self.color = (127, 88, 0, 255)
+        variation = random.randint(-10, 10)
+        self.color = (90 + variation, 60 + variation, 9, 255)
         self.name = "Wood"
         self.density = 1
 

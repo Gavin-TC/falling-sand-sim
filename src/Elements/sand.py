@@ -5,7 +5,8 @@ from Elements.element import Element
 class Sand(Element):
     def __init__(self, position):
         super().__init__(position)
-        self.color = (255, 255, 0, 255)
+        value = random.randrange(200, 255)
+        self.color = (value, value, 0, 255)
         self.name = "Sand"
         self.density = 2
 

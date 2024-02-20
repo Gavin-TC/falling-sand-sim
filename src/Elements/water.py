@@ -5,7 +5,7 @@ from Elements.element import Element
 class Water(Element):
     def __init__(self, position) -> None:
         super().__init__(position)
-        self.color = (0, 0, 255, 255)
+        self.color = (0, 0, random.randrange(180, 255), 255)
         self.name = "Water"
         self.density = 1
 
@@ -20,11 +20,11 @@ class Water(Element):
         if grid[px][py+1] == 0:
             py += 1
         elif grid[px+1][py] == 0 or grid[px-1][py] == 0:
-            rand_num = random.randrange(-1, 2)
+            rand_num = random.choice([-1, 1])
             if grid[px+rand_num][py] == 0:
                 px += rand_num
         else:
-            rand_num = random.randrange(-1, 2)
+            rand_num = random.choice([-1, 1])
             if grid[px+rand_num][py+1] == 0:
                 px += rand_num
                 py += 1
