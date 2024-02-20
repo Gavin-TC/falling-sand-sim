@@ -25,7 +25,10 @@ pygame.display.set_caption("Falling Sand Simulation")
 clock = pygame.time.Clock()
 font = pygame.font.SysFont("Arial", 18)
 
+positions = [] 
+
 def main():
+    global positions
     game_running = True
 
 
@@ -43,6 +46,7 @@ def main():
 
     elements: list[Element] = []
     grid: list[list[int]] = [[0 for _ in range(rows)] for _ in range(cols)]
+    positions = [element.get_position() for element in elements]
 
     while game_running:
         for event in pygame.event.get():
@@ -93,7 +97,17 @@ def main():
                 case "Wood":
                     grid[px][py] = 3
 
-            element.update(grid, elements)
+            if not element.get_name() == "Wood": 
+                element.update(grid, elements)
+            
+            if py < 0:
+                elements.remove(element)
+
+            positions.remove((px, py))
+            px = element.get_position()[0]
+            py = element.get_position()[1]
+            positions.append((px, py))
+           
             pygame.draw.rect(screen, element.get_color(), (px * resolution, py * resolution, resolution, resolution))
 
         # =========
@@ -111,8 +125,9 @@ def main():
     pygame.quit()
 
 def spawn_element(selected_type: int, elements: list[Element], grid: list[list[int]])-> None:
+    global positions
+    
     mouse_pos = pygame.mouse.get_pos()
-
     radius = 1
     # if selected_type == 2:
     #     radius = 5
@@ -128,39 +143,47 @@ def spawn_element(selected_type: int, elements: list[Element], grid: list[list[i
                 if grid[px][py] == 0:
                     grid[px][py] = 1
                     elements.append(Sand((px, py)))
+                    positions.append((px, py))
             elif selected_type == 2:
                 if grid[px][py] == 0:
                     grid[px][py] = 1
                     elements.append(Water((px, py)))
+                    positions.append((px, py))
             elif selected_type == 3:
                 if grid[px][py] == 0:
                     grid[px][py] = 3
                     elements.append(Wood((px, py)))
+                    positions.append((px, py))
             elif selected_type == 4:
                 if grid[px][py] == 0:
                     grid[px][py] = 4
                     elements.append(Fire((px, py)))
+                    positions.append((px, py))
+                    
 
 
 def remove_element(elements: list[Element], grid: list[list[int]]) -> None:
+    global positions
+
     mouse_pos = pygame.mouse.get_pos()
+    mx = mouse_pos[0]
+    my = mouse_pos[1]
     radius = 10
 
     for x in range(radius):
         for y in range(radius):
-            positions = [element.get_position() for element in elements]
-            if positions:
-                px = int(mouse_pos[0] / resolution) - x
-                py = int(mouse_pos[1] / resolution) - y
-
+            px = int(mx / resolution) - x
+            py = int(my / resolution) - y
+            
+            if (px, py) in positions:
                 try:
                     if grid[px][py] != 0:
                         try:
                             grid[px][py] = 0
                             elements.remove(elements[positions.index((px, py))])
+                            positions.remove((px, py))
                         except:
                             pass
                 except:
                     pass
-
 main()

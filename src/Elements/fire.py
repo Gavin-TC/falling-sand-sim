@@ -34,7 +34,7 @@ class Fire(Element):
                 px += rand_num
                 py -= 1
 
-        if self.color[0] > 150:
+        if self.color[0] > 200:
             self.color = (max(255-self.turns, 20), 0, 0, 0)
         else:
             self.color = (max(255-self.turns, 20), max(255-self.turns, 20), max(255-self.turns, 20), 0)
